@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 public class UsuarioRegistroDto {
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
+    @NotBlank(message = "El apellido es obligatorio")
     private String apellido;
     private Documento documento;
     private Direccion direccion;
