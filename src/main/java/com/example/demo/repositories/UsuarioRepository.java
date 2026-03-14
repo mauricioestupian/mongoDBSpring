@@ -16,4 +16,6 @@ public interface UsuarioRepository extends MongoRepository<Usuario, String> {
     // consulta usuario por numero documento usando método de consulta derivada
     Optional<Usuario> findByDocNumero(String numero);
 
+    Optional<Usuario> findByNom(String nombre);// consulta usuario por nombre usando método de consulta derivada
+
 }
