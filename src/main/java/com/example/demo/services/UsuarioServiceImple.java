@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.UsuarioDto;
 import com.example.demo.dto.UsuarioRegistroDto;
@@ -82,6 +83,7 @@ public class UsuarioServiceImple implements UsuarioService {
                         "Usuario no encontrado con  el documento: " + docnum));
     }
 
+    @Transactional
     @Override
     public UsuarioRegistroDto registrarUsuario(UsuarioRegistroDto dto) {
         // 1. Guardar perfil

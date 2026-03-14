@@ -17,6 +17,8 @@ import com.example.demo.dto.UsuarioDto;
 import com.example.demo.dto.UsuarioRegistroDto;
 import com.example.demo.services.UsuarioService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
@@ -76,7 +78,9 @@ public class UsuarioController {
     }
 
     @PostMapping("/registrar")
-    public ResponseEntity<UsuarioRegistroDto> registrar(@RequestBody UsuarioRegistroDto dto) {
+    public ResponseEntity<?> registrar(@Valid @RequestBody UsuarioRegistroDto dto) {
+        System.out.println("DTO recibido: " + dto);
+        System.out.println("Roles: " + dto.getRoles());
         UsuarioRegistroDto creado = usuarioService.registrarUsuario(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }

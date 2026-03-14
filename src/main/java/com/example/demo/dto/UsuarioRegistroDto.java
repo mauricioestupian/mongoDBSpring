@@ -7,6 +7,7 @@ import com.example.demo.models.Documento;
 import com.example.demo.models.Rol;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UsuarioRegistroDto {
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
     private String apellido;
     private Documento documento;
