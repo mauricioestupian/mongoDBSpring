@@ -9,15 +9,24 @@ import com.example.demo.repositories.UsuarioAuthRepository;
 
 public class DetallesUsuarioService implements UserDetailsService {
 
-    private final UsuarioAuthRepository uar;
+    // Inyeccion dependencias de UsuarioAuthRepository para consultas con la base de
+    // datos
+    private final UsuarioAuthRepository uar; // uar es el alias para envocar el repositorio
 
     public DetallesUsuarioService(UsuarioAuthRepository uar) {
         this.uar = uar;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) { // Este nombre es obligatorio porque: Es parte del contrato
-                                                             // de Spring Security y Spring lo llama internamente
+    // librerias:
+    // UserDetails -> org.springframework.security.core.userdetails.UserDetails
+    // Este método:
+    // Busca el usuario en BD
+    // Lo adapta a un objeto que Spring entiende
+    // Devuelve un UserDetails
+    public UserDetails loadUserByUsername(String username) { // Es nombre del metodo loadUserByUsername es obligatorio
+                                                             // porque: Es parte del contrato de Spring Security y
+                                                             // Spring lo llama internamente
 
         UsuarioAuth usuario = uar.findByUser(username).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 

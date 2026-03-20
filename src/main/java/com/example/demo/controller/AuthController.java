@@ -62,4 +62,96 @@ public class AuthController {
 
         return ResponseEntity.ok(respuesta);
     }
+
+    /*
+     * modelo opcional haciendo uso de ApiResponse<?> en lugar de ResponseEntity
+     * 
+     * @PostMapping("/login")
+     * public ApiResponse<?> login(@RequestBody UsuarioAuthDto dto,
+     * HttpServletRequest request) {
+     * 
+     * // 1. Autenticación
+     * Authentication auth = authenticationManager.authenticate(
+     * new UsernamePasswordAuthenticationToken(
+     * dto.getUsuario(),
+     * dto.getPassword()));
+     * 
+     * // 2. Obtener usuario completo
+     * UsuarioAuth usuario = repo.findByUser(dto.getUsuario())
+     * .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+     * 
+     * // 3. Roles
+     * List<String> roles = usuario.getRoles()
+     * .stream()
+     * .map(Enum::name)
+     * .toList();
+     * 
+     * // 4. Token con roles
+     * String token = jwtService.generarToken(usuario.getUser(), roles);
+     * 
+     * // 5. Respuesta enterprise
+     * return ApiResponse.success(
+     * Map.of(
+     * "token", token,
+     * "usuario", usuario.getUser(),
+     * "roles", roles),
+     * "Login exitoso",
+     * request.getRequestURI());
+     * }
+     * 
+     * package com.tuapp.util;
+     * 
+     * import java.time.LocalDateTime;
+     * 
+     * public class ApiResponse<T> {
+     * 
+     * private LocalDateTime timestamp;
+     * private int status;
+     * private String mensaje;
+     * private String path;
+     * private T data;
+     * 
+     * // 🔹 Constructor
+     * public ApiResponse(int status, String mensaje, String path, T data) {
+     * this.timestamp = LocalDateTime.now();
+     * this.status = status;
+     * this.mensaje = mensaje;
+     * this.path = path;
+     * this.data = data;
+     * }
+     * 
+     * // 🔹 Método estático para éxito
+     * public static <T> ApiResponse<T> success(T data, String mensaje, String path)
+     * {
+     * return new ApiResponse<>(200, mensaje, path, data);
+     * }
+     * 
+     * // 🔹 Método para error
+     * public static <T> ApiResponse<T> error(int status, String mensaje, String
+     * path) {
+     * return new ApiResponse<>(status, mensaje, path, null);
+     * }
+     * 
+     * // 🔹 Getters
+     * public LocalDateTime getTimestamp() {
+     * return timestamp;
+     * }
+     * 
+     * public int getStatus() {
+     * return status;
+     * }
+     * 
+     * public String getMensaje() {
+     * return mensaje;
+     * }
+     * 
+     * public String getPath() {
+     * return path;
+     * }
+     * 
+     * public T getData() {
+     * return data;
+     * }
+     * }
+     */
 }

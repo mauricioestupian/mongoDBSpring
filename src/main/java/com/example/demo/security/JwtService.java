@@ -14,9 +14,15 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
+    // Esta es la clave para firmar el token
+    // Debe tener mínimo 32 caracteres
     private final String CLAVE_SECRETA = "clave-secreta-1234567890";
 
+    // Libreria Key -> java.security.Key;
     private Key obtenerClave() {
+        // Libreria Keys -> io.jsonwebtoken.security.Keys
+        // Convierte el string en una clave válida para JWT
+        // genera clave compatible con HS256
         return Keys.hmacShaKeyFor(CLAVE_SECRETA.getBytes());
     }
 
