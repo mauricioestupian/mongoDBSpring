@@ -16,7 +16,7 @@ public class JwtService {
 
     // Esta es la clave para firmar el token
     // Debe tener mínimo 32 caracteres
-    private final String CLAVE_SECRETA = "clave-secreta-1234567890-000000000";
+    private final String CLAVE_SECRETA = "clave-secreta-123456789000000000";
 
     // Libreria Key -> java.security.Key;
     private Key obtenerClave() {
@@ -33,7 +33,7 @@ public class JwtService {
                 .claim("roles", roles)// Agrega los roles del usuario
                 .setIssuedAt(new Date()) // Establece la fecha de emisión del token
                 .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // expiración del token (1 hora)
-                // .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                // .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 *24))
                 .signWith(obtenerClave(), SignatureAlgorithm.HS256) // Firma el token con la clave secreta
                 .compact();
     }
