@@ -36,8 +36,12 @@ public class DetallesUsuarioService implements UserDetailsService {
         return User.builder()
                 .username(usuario.getUser()) // Establece el nombre de usuario
                 .password(usuario.getPass()) // Establece la contraseña (debería estar codificada)
-                .roles(usuario.getRoles().stream().map(Enum::name).toArray(String[]::new)) // Puedes asignar roles según
-                                                                                           // tu lógica
+                .authorities(
+                        usuario.getRoles().stream()
+                                .map(Enum::name)
+                                .toArray(String[]::new))
+                // Puedes asignar roles según
+                // tu lógica
                 .build();
     }
 

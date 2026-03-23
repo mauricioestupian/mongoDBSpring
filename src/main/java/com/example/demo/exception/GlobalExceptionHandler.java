@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
         response.put("status", HttpStatus.NOT_FOUND.value());
         response.put("error", "Recurso no encontrado");
         response.put("path", request.getRequestURI());
-        response.put("errores", ex.getMessage());
+        response.put("errors", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
