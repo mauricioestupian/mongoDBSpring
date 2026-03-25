@@ -14,40 +14,66 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
+// esto hace que la clase sea de la configuracion del sistema
+// se cargan beans atutomaticamente y configutaciones del CORS.
 public class SecurityConfig {
 
     @Bean
+    // el autentication manager automaticamente hace uso e DetallesUsuarioService y
+    // PasswordEncoder
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
     @Bean
+    // se definen las reglas de seguridad
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
+        http // Activa CORS en Spring Security esto usa automáticamente:
+             // CorsConfigurationSource
                 .cors(cors -> {
                 })
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/auth/**", "/api/usuarios/registrar").permitAll()
+                .csrf(csrf -> csrf.disable())// Desactiva protección CSRF
+                .authorizeHttpRequests(auth -> auth // define quién puede acceder a qué
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()// Permite todas las peticiones OPTIONS
+                        // El navegador hace esto antes de un POST:
+                        // OPTIONS /auth/login
+                        // Si lo bloquemos → CORS falla
+                        .requestMatchers("/auth/**", "/api/usuarios/registrar").permitAll()// rutas publicas
                         .anyRequest().authenticated());
+        // Cualquier otra ruta:requiere token JWT
 
         return http.build();
+        // Aplica toda la configuración
     }
 
     @Bean
+    // Define reglas de acceso desde frontend
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5174"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedOrigins(List.of("http://localhost:5173"));// Solo permite peticiones desde:
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));// Permite estos métodos HTTP
+        config.setAllowedHeaders(List.of("*"));// Permite cualquier header
         config.setAllowCredentials(true);
+        // Permite: cookies, headers de autenticación
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+        source.registerCorsConfiguration("/**", config);// Aplica CORS a TODAS las rutas
 
         return source;
     }
 }
+
+/*
+ * Resumen
+ * Frontend (React)
+ * ↓
+ * CORS Config ✔
+ * ↓
+ * Security FilterChain
+ * ↓
+ * ¿Ruta pública?
+ * ✔ sí → entra
+ * no → pide JWT
+ */

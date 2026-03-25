@@ -4,6 +4,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -16,6 +17,9 @@ public class JwtService {
 
     // Esta es la clave para firmar el token
     // Debe tener mínimo 32 caracteres
+    @Value("${mivariable}")
+    private String CLAVE;
+
     private final String CLAVE_SECRETA = "clave-secreta-123456789000000000";
 
     // Libreria Key -> java.security.Key;
@@ -23,7 +27,9 @@ public class JwtService {
         // Libreria Keys -> io.jsonwebtoken.security.Keys
         // Convierte el string en una clave válida para JWT
         // genera clave compatible con HS256
-        return Keys.hmacShaKeyFor(CLAVE_SECRETA.getBytes());
+        System.out.println("La clave secreta codificada es");
+        System.out.println(CLAVE);
+        return Keys.hmacShaKeyFor(CLAVE.getBytes());
     }
 
     // Generar un token JWT
