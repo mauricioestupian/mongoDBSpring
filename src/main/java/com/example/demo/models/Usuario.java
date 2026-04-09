@@ -28,5 +28,7 @@ public class Usuario {
     // private List<Direccion> dire; // lista de direcciones
     @NotBlank
     private String email; // correo electrónico del usuario
+    @NotBlank
+    private String tel; // número de teléfono del usuario
 
 }

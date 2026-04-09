@@ -3,9 +3,11 @@ package com.example.demo.services;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.dto.UsuarioDto;
 import com.example.demo.dto.UsuarioRegistroDto;
@@ -108,6 +110,14 @@ public class UsuarioServiceImple implements UsuarioService {
         authRepo.save(auth);
 
         return dto;
+    }
+
+    @Override
+    public UsuarioDto UsuarioById(String id) {
+        Usuario usuario = userRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Usuario no encontrado con id: " + id));
+        return userMapper.toDto(usuario);
     }
 
 }

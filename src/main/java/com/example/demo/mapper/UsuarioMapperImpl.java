@@ -39,6 +39,7 @@ public class UsuarioMapperImpl implements UsuarioMapper {
                 .email(usuario.getEmail())
                 .documento(usuario.getDoc())
                 .direccion(usuario.getDir())
+                .telefono(usuario.getTel())
                 .build();
         /**
          * Convierte una entidad Usuario en un DTO.
@@ -76,6 +77,7 @@ public class UsuarioMapperImpl implements UsuarioMapper {
         usuario.setEmail(usuarioDto.getEmail());
         usuario.setDoc(usuarioDto.getDocumento());
         usuario.setDir(usuarioDto.getDireccion());
+        usuario.setTel(usuarioDto.getTelefono());
         /**
          * Actualiza una entidad Usuario existente con los datos de un DTO.
          * Aquí no usamos Builder porque ya tenemos el objeto creado,

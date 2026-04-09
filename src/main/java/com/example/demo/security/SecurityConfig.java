@@ -39,7 +39,15 @@ public class SecurityConfig {
                         // El navegador hace esto antes de un POST:
                         // OPTIONS /auth/login
                         // Si lo bloquemos → CORS falla
-                        .requestMatchers("/auth/**", "/api/usuarios/registrar").permitAll()// rutas publicas
+                        .requestMatchers(
+                                "/auth/**",
+                                "/api/usuarios/registrar",
+                                "/api/usuarios",
+                                "/api/servicios/crear",
+                                "/api/servicios/categorias",
+                                "/api/usuarios/**")
+                        .permitAll()// rutas
+                                    // publicas
                         .anyRequest().authenticated());
         // Cualquier otra ruta:requiere token JWT
 

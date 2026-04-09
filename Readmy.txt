@@ -8,6 +8,15 @@
 - security → utilidades y componentes de seguridad (como PasswordEncoderUtil, clases de autenticación, filtros personalizados) - lógica de seguridad.
 - config →  - es parte de la configuración de Spring Security(SecurityFilterChain) - configuración de Spring
 
+uso de MAPSTRUCT
+para mejor uso de mapper
+👉 MapStruct es una librería de Java que convierte automáticamente objetos.
+DTO  →  Entity
+Entity → DTO
+✔ Lee tu interface
+✔ Genera la implementación automáticamente
+✔ En tiempo de compilación (rápido 🔥)
+
 
 src/main/java/com/tuempresa/tuapp/
 │

@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.UsuarioAuthDto;
+import com.example.demo.models.Usuario;
 import com.example.demo.models.UsuarioAuth;
 import com.example.demo.repositories.UsuarioAuthRepository;
+import com.example.demo.repositories.UsuarioRepository;
 import com.example.demo.security.JwtService;
 
 @RestController
@@ -25,11 +27,14 @@ public class AuthController {
         private final JwtService jwtService;
         private final AuthenticationManager authManager;
         private final UsuarioAuthRepository uar;
+        private final UsuarioRepository usuarioRepo;
 
-        public AuthController(JwtService jwtService, AuthenticationManager authManager, UsuarioAuthRepository uar) {
+        public AuthController(JwtService jwtService, AuthenticationManager authManager, UsuarioAuthRepository uar,
+                        UsuarioRepository usuarioRepo) {
                 this.jwtService = jwtService;
                 this.authManager = authManager;
                 this.uar = uar;
+                this.usuarioRepo = usuarioRepo;
         }
 
         @PostMapping("/login")
@@ -43,6 +48,11 @@ public class AuthController {
                 // consultar usuario en Dase de datos
                 UsuarioAuth usuario = uar.findByUser(dto.getUsuario())
                                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado contro"));
+
+                // extraer el nombre del usuario completo desde la colección de perfil usando el
+                // id del usuario auth
+                Usuario perfil = usuarioRepo.findById(usuario.getId())
+                                .orElseThrow(() -> new RuntimeException("Perfil no encontrado"));
                 // 3️⃣ EXTRAER ROLES (Enum → String)
                 List<String> roles = usuario.getRoles()
                                 .stream()
@@ -50,109 +60,111 @@ public class AuthController {
                                 .toList();
 
                 // 4️⃣ GENERAR TOKEN JWT
-                String token = jwtService.generarToken(usuario.getUser(), roles);
+                String token = jwtService.generarToken(usuario.getUser(), roles, perfil.getNom(), perfil.getApe());
 
                 // 5️⃣ RESPUESTA (estándar tipo enterprise básica)
                 Map<String, Object> respuesta = Map.of(
                                 "timestamp", LocalDateTime.now(),
                                 "status", 200,
+                                "id", usuario.getId(),
                                 "mensaje", "Login exitoso",
                                 "usuario", usuario.getUser(),
+                                "nombreCompleto", perfil.getNom() + " " + perfil.getApe(),
                                 "roles", roles,
                                 "token", token);
 
                 return ResponseEntity.ok(respuesta);
         }
-
-        /*
-         * modelo opcional haciendo uso de ApiResponse<?> en lugar de ResponseEntity
-         * 
-         * @PostMapping("/login")
-         * public ApiResponse<?> login(@RequestBody UsuarioAuthDto dto,
-         * HttpServletRequest request) {
-         * 
-         * // 1. Autenticación
-         * Authentication auth = authenticationManager.authenticate(
-         * new UsernamePasswordAuthenticationToken(
-         * dto.getUsuario(),
-         * dto.getPassword()));
-         * 
-         * // 2. Obtener usuario completo
-         * UsuarioAuth usuario = repo.findByUser(dto.getUsuario())
-         * .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-         * 
-         * // 3. Roles
-         * List<String> roles = usuario.getRoles()
-         * .stream()
-         * .map(Enum::name)
-         * .toList();
-         * 
-         * // 4. Token con roles
-         * String token = jwtService.generarToken(usuario.getUser(), roles);
-         * 
-         * // 5. Respuesta enterprise
-         * return ApiResponse.success(
-         * Map.of(
-         * "token", token,
-         * "usuario", usuario.getUser(),
-         * "roles", roles),
-         * "Login exitoso",
-         * request.getRequestURI());
-         * }
-         * 
-         * package com.tuapp.util;
-         * 
-         * import java.time.LocalDateTime;
-         * 
-         * public class ApiResponse<T> {
-         * 
-         * private LocalDateTime timestamp;
-         * private int status;
-         * private String mensaje;
-         * private String path;
-         * private T data;
-         * 
-         * // 🔹 Constructor
-         * public ApiResponse(int status, String mensaje, String path, T data) {
-         * this.timestamp = LocalDateTime.now();
-         * this.status = status;
-         * this.mensaje = mensaje;
-         * this.path = path;
-         * this.data = data;
-         * }
-         * 
-         * // 🔹 Método estático para éxito
-         * public static <T> ApiResponse<T> success(T data, String mensaje, String path)
-         * {
-         * return new ApiResponse<>(200, mensaje, path, data);
-         * }
-         * 
-         * // 🔹 Método para error
-         * public static <T> ApiResponse<T> error(int status, String mensaje, String
-         * path) {
-         * return new ApiResponse<>(status, mensaje, path, null);
-         * }
-         * 
-         * // 🔹 Getters
-         * public LocalDateTime getTimestamp() {
-         * return timestamp;
-         * }
-         * 
-         * public int getStatus() {
-         * return status;
-         * }
-         * 
-         * public String getMensaje() {
-         * return mensaje;
-         * }
-         * 
-         * public String getPath() {
-         * return path;
-         * }
-         * 
-         * public T getData() {
-         * return data;
-         * }
-         * }
-         */
 }
+
+/*
+ * modelo opcional haciendo uso de ApiResponse<?> en lugar de ResponseEntity
+ * 
+ * @PostMapping("/login")
+ * public ApiResponse<?> login(@RequestBody UsuarioAuthDto dto,
+ * HttpServletRequest request) {
+ * 
+ * // 1. Autenticación
+ * Authentication auth = authenticationManager.authenticate(
+ * new UsernamePasswordAuthenticationToken(
+ * dto.getUsuario(),
+ * dto.getPassword()));
+ * 
+ * // 2. Obtener usuario completo
+ * UsuarioAuth usuario = repo.findByUser(dto.getUsuario())
+ * .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+ * 
+ * // 3. Roles
+ * List<String> roles = usuario.getRoles()
+ * .stream()
+ * .map(Enum::name)
+ * .toList();
+ * 
+ * // 4. Token con roles
+ * String token = jwtService.generarToken(usuario.getUser(), roles);
+ * 
+ * // 5. Respuesta enterprise
+ * return ApiResponse.success(
+ * Map.of(
+ * "token", token,
+ * "usuario", usuario.getUser(),
+ * "roles", roles),
+ * "Login exitoso",
+ * request.getRequestURI());
+ * }
+ * 
+ * package com.tuapp.util;
+ * 
+ * import java.time.LocalDateTime;
+ * 
+ * public class ApiResponse<T> {
+ * 
+ * private LocalDateTime timestamp;
+ * private int status;
+ * private String mensaje;
+ * private String path;
+ * private T data;
+ * 
+ * // 🔹 Constructor
+ * public ApiResponse(int status, String mensaje, String path, T data) {
+ * this.timestamp = LocalDateTime.now();
+ * this.status = status;
+ * this.mensaje = mensaje;
+ * this.path = path;
+ * this.data = data;
+ * }
+ * 
+ * // 🔹 Método estático para éxito
+ * public static <T> ApiResponse<T> success(T data, String mensaje, String path)
+ * {
+ * return new ApiResponse<>(200, mensaje, path, data);
+ * }
+ * 
+ * // 🔹 Método para error
+ * public static <T> ApiResponse<T> error(int status, String mensaje, String
+ * path) {
+ * return new ApiResponse<>(status, mensaje, path, null);
+ * }
+ * 
+ * // 🔹 Getters
+ * public LocalDateTime getTimestamp() {
+ * return timestamp;
+ * }
+ * 
+ * public int getStatus() {
+ * return status;
+ * }
+ * 
+ * public String getMensaje() {
+ * return mensaje;
+ * }
+ * 
+ * public String getPath() {
+ * return path;
+ * }
+ * 
+ * public T getData() {
+ * return data;
+ * }
+ * }
+ */

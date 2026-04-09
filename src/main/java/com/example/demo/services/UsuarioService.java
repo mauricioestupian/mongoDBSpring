@@ -21,4 +21,6 @@ public interface UsuarioService {
 
     UsuarioRegistroDto registrarUsuario(UsuarioRegistroDto dto);
 
+    UsuarioDto UsuarioById(String id);
+
 }

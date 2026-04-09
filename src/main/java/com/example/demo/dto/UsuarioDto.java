@@ -21,5 +21,6 @@ public class UsuarioDto {
     // private List<Direccion> direcciones; // lista de direcciones
 
     private String email; // correo electrónico del usuario
+    private String telefono; // número de teléfono del usuario
 
 }

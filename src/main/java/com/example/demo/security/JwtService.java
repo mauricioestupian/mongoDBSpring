@@ -20,7 +20,7 @@ public class JwtService {
     @Value("${mivariable}")
     private String CLAVE;
 
-    private final String CLAVE_SECRETA = "clave-secreta-123456789000000000";
+    // private final String CLAVE_SECRETA = "clave-secreta-123456789000000000";
 
     // Libreria Key -> java.security.Key;
     private Key obtenerClave() {
@@ -33,10 +33,12 @@ public class JwtService {
     }
 
     // Generar un token JWT
-    public String generarToken(String usuario, List<String> roles) {
+    public String generarToken(String usuario, List<String> roles, String nom, String ape) {
         return Jwts.builder()// Construye el token JWT
                 .setSubject(usuario)// Establece el sujeto del token (el usuario)
                 .claim("roles", roles)// Agrega los roles del usuario
+                .claim("nombre", nom)// Agrega el nombre del usuario
+                .claim("apellido", ape)// Agrega el apellido del usuario
                 .setIssuedAt(new Date()) // Establece la fecha de emisión del token
                 .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // expiración del token (1 hora)
                 // .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 *24))
