@@ -45,24 +45,25 @@ public class AuthController {
                                 .authenticate(new UsernamePasswordAuthenticationToken(dto.getUsuario(),
                                                 dto.getPassword()));
 
-                // consultar usuario en Dase de datos
+                // 1. consultar usuario en Dase de datos
                 UsuarioAuth usuario = uar.findByUser(dto.getUsuario())
                                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado contro"));
 
-                // extraer el nombre del usuario completo desde la colección de perfil usando el
+                // 2. extraer el nombre del usuario completo desde la colección de perfil usando
+                // el
                 // id del usuario auth
                 Usuario perfil = usuarioRepo.findById(usuario.getId())
                                 .orElseThrow(() -> new RuntimeException("Perfil no encontrado"));
-                // 3️⃣ EXTRAER ROLES (Enum → String)
+                // 3. EXTRAER ROLES (Enum → String)
                 List<String> roles = usuario.getRoles()
                                 .stream()
                                 .map(Enum::name)
                                 .toList();
 
-                // 4️⃣ GENERAR TOKEN JWT
+                // 4. GENERAR TOKEN JWT
                 String token = jwtService.generarToken(usuario.getUser(), roles, perfil.getNom(), perfil.getApe());
 
-                // 5️⃣ RESPUESTA (estándar tipo enterprise básica)
+                // 5. RESPUESTA (estándar tipo enterprise básica)
                 Map<String, Object> respuesta = Map.of(
                                 "timestamp", LocalDateTime.now(),
                                 "status", 200,
