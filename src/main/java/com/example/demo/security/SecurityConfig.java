@@ -60,7 +60,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));// Solo permite peticiones desde:
+        config.setAllowedOrigins(List.of("http://localhost:5173,http://localhost:60315/"));// Solo permite peticiones
+                                                                                           // desde:
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));// Permite estos métodos HTTP
         config.setAllowedHeaders(List.of("*"));// Permite cualquier header
         config.setAllowCredentials(true);
