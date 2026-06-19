@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.models.CategoriaServ;
+import com.example.demo.enums.CategoriaServicio;
 import com.example.demo.models.Servicio;
 import com.example.demo.services.ServicioService;
 
@@ -24,8 +24,8 @@ public class ServicioControler {
 
     // Obtener todas las categorías disponibles (enum CategoriaServ)
     @GetMapping("/categorias")
-    public ResponseEntity<CategoriaServ[]> obtenerCategorias() {
-        return ResponseEntity.ok(CategoriaServ.values());
+    public ResponseEntity<CategoriaServicio[]> obtenerCategorias() {
+        return ResponseEntity.ok(CategoriaServicio.values());
     }
 
     // Crear un nuevo servicio

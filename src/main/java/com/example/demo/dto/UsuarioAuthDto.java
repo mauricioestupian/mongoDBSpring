@@ -2,7 +2,7 @@ package com.example.demo.dto;
 
 import java.util.List;
 
-import com.example.demo.models.Rol;
+import com.example.demo.enums.Rol;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;

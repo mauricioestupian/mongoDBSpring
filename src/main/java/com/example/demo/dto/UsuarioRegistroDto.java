@@ -2,9 +2,9 @@ package com.example.demo.dto;
 
 import java.util.List;
 
+import com.example.demo.enums.Rol;
 import com.example.demo.models.Direccion;
 import com.example.demo.models.Documento;
-import com.example.demo.models.Rol;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.NotBlank;

@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()// Permite todas las peticiones OPTIONS
                         // El navegador hace esto antes de un POST:
                         // OPTIONS /auth/login
-                        // Si lo bloquemos → CORS falla
+                        // Si lo bloqueamos → CORS falla
                         .requestMatchers(
                                 "/auth/**",
                                 "/api/usuarios/registrar",
@@ -60,8 +60,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173,http://localhost:60315/"));// Solo permite peticiones
-                                                                                           // desde:
+        config.setAllowedOrigins(List.of("http://localhost:5173,http://localhost:6031/"));// Solo permite peticiones
+                                                                                          // desde:
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));// Permite estos métodos HTTP
         config.setAllowedHeaders(List.of("*"));// Permite cualquier header
         config.setAllowCredentials(true);
