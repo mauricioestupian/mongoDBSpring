@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -17,6 +18,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 // esto hace que la clase sea de la configuracion del sistema
 // se cargan beans atutomaticamente y configutaciones del CORS.
 public class SecurityConfig {
+
+    private final JwtFilter jwtFilter;
+
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
 
     @Bean
     // el autentication manager automaticamente hace uso e DetallesUsuarioService y
@@ -44,12 +51,17 @@ public class SecurityConfig {
                                 "/api/usuarios/registrar",
                                 "/api/usuarios",
                                 "/api/servicios/crear",
-                                "/api/servicios/categorias",
                                 "/api/usuarios/**")
-                        .permitAll()// rutas
-                                    // publicas
+                        .permitAll()// rutas publicas
+
+                        .requestMatchers("/api/servicios/categorias,")
+                        .hasAuthority("ROLE_Admin")
                         .anyRequest().authenticated());
         // Cualquier otra ruta:requiere token JWT
+
+        http.addFilterBefore(
+                jwtFilter,
+                UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
         // Aplica toda la configuración
