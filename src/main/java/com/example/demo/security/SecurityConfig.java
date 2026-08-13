@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,23 +34,24 @@ public class SecurityConfig {
                 }) // Activa CORS usando el Bean corsConfigurationSource
                 .csrf(csrf -> csrf.disable()) // Desactiva protección CSRF para APIs REST
                 .authorizeHttpRequests(auth -> auth
-                        // Permite todas las peticiones preliminares OPTIONS
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Rutas públicas
                         .requestMatchers(
+                                "/inicio",
                                 "/auth/**",
                                 "/api/usuarios/registrar",
-                                "/api/usuarios",
-                                "/api/servicios/crear",
-                                "/api/usuarios/**")
+                                "/api/servicios/crear")
                         .permitAll()
 
-                        // Rutas privadas exclusivas para ADMIN
-                        .requestMatchers("/api/servicios/categorias").hasAuthority("ROLE_Admin")
+                        // Esta sí la probamos protegida
+                        .requestMatchers(
+                                "/api/usuarios/**",
+                                "/api/servicios/categorias")
+                        .hasAuthority("ROLE_Admin")
 
-                        // Cualquier otra ruta requiere token JWT válido
-                        .anyRequest().authenticated());
+                        // Las demás requieren autenticación
+                        .anyRequest()
+                        .authenticated());
 
         // Registra el filtro JWT antes del filtro de autenticación por defecto
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

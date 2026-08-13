@@ -32,6 +32,11 @@ public class JwtFilter extends OncePerRequestFilter {
                         throws ServletException, IOException {
 
                 String authHeader = request.getHeader("Authorization");
+                System.out.println("================================");
+                System.out.println("URI: " + request.getRequestURI());
+                System.out.println("METHOD: " + request.getMethod());
+                System.out.println("AUTH: " + request.getHeader("Authorization"));
+                System.out.println("================================");
 
                 if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                         System.out.println("No se encontró el header de autorización o no tiene formato Bearer");
@@ -45,8 +50,26 @@ public class JwtFilter extends OncePerRequestFilter {
                 String token = authHeader.substring(7);
                 System.out.println("Token Recibido: " + token);
 
-                String username = jwtService.extraerUsuario(token);
-                System.out.println("Usuario del Token: " + username);
+                /*
+                 * String username = jwtService.extraerUsuario(token);
+                 * System.out.println("Usuario del Token: " + username);
+                 */
+
+                String username;
+
+                try {
+
+                        username = jwtService.extraerUsuario(token);
+
+                        System.out.println("Usuario del Token: " + username);
+
+                } catch (Exception e) {
+
+                        System.out.println("Token JWT inválido o expirado");
+
+                        filterChain.doFilter(request, response);
+                        return;
+                }
 
                 // Cargar el usuario desde la base de datos
                 UserDetails userDetails = detallesUsuarioService.loadUserByUsername(username);

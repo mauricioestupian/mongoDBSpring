@@ -27,8 +27,8 @@ public class JwtService {
         // Libreria Keys -> io.jsonwebtoken.security.Keys
         // Convierte el string en una clave válida para JWT
         // genera clave compatible con HS256
-        System.out.println("La clave secreta codificada es");
-        System.out.println(CLAVE);
+        // System.out.println("La clave secreta codificada es");
+        // System.out.println(CLAVE);
         return Keys.hmacShaKeyFor(CLAVE.getBytes());
     }
 
