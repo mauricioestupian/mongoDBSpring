@@ -16,61 +16,56 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
-    private final DetallesUsuarioService detallesUsuarioService;
+        private final JwtService jwtService;
+        private final DetallesUsuarioService detallesUsuarioService;
 
-    public JwtFilter(JwtService jwtService, DetallesUsuarioService detallesUsuarioService) {
-        this.jwtService = jwtService;
-        this.detallesUsuarioService = detallesUsuarioService;
-    }
-
-    @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain)
-            throws ServletException, IOException {
-
-        String authHeader = request.getHeader("Authorization");
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-
-            System.out.println("No se encontró el header de autorización o no tiene formato Bearer"); // Debug
-
-            filterChain.doFilter(request, response);
-            return;
+        public JwtFilter(JwtService jwtService, DetallesUsuarioService detallesUsuarioService) {
+                this.jwtService = jwtService;
+                this.detallesUsuarioService = detallesUsuarioService;
         }
 
-        System.out.println("Header Recibido: "); // Debug
-        System.out.println(authHeader); // Debug
+        @Override
+        protected void doFilterInternal(
+                        HttpServletRequest request,
+                        HttpServletResponse response,
+                        FilterChain filterChain)
+                        throws ServletException, IOException {
 
-        // token viene con formato "Bearer <token
+                String authHeader = request.getHeader("Authorization");
 
-        String token = authHeader.substring(7); // Extrae el token sin
+                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                        System.out.println("No se encontró el header de autorización o no tiene formato Bearer");
+                        filterChain.doFilter(request, response);
+                        return;
+                }
 
-        System.out.println("Token Recibido: "); // Debug
-        System.out.println(token); // Debug
+                System.out.println("Header Recibido: " + authHeader);
 
-        String username = jwtService.extraerUsuario(token);
+                // Extrae el token sin la palabra 'Bearer '
+                String token = authHeader.substring(7);
+                System.out.println("Token Recibido: " + token);
 
-        System.out.println("Usuario del Token: "); // Debug
-        System.out.println(username); // Debug
+                String username = jwtService.extraerUsuario(token);
+                System.out.println("Usuario del Token: " + username);
 
-        System.out.println("Roles del Token: "); // Debug
+                // Cargar el usuario desde la base de datos
+                UserDetails userDetails = detallesUsuarioService.loadUserByUsername(username);
+                System.out.println("Usuario cargado desde BD: " + userDetails.getUsername());
 
-        UserDetails userDetails = detallesUsuarioService.loadUserByUsername(username);
+                // Mostrar roles en consola para verificar
+                System.out.println("Roles del Token:");
+                userDetails.getAuthorities().forEach(auth -> System.out.println("- " + auth.getAuthority()));
 
-        userDetails.getAuthorities().forEach(auth -> System.out.println(auth.getAuthority())); // Debug
+                // Crear el token de autenticación para Spring Security
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities());
 
-        UsernamePasswordAuthenticationToken authToken =
-        new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.getAuthorities());
+                // Guardar la autenticación en el contexto de seguridad
+                SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        SecurityContextHolder.getContext()
-        .setAuthentication(authToken);
-
-        filterChain.doFilter(request, response);
-    }
+                // Continuar con la ejecución de los demás filtros
+                filterChain.doFilter(request, response);
+        }
 }
