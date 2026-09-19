@@ -38,6 +38,7 @@ public class SecurityConfig {
                         // Rutas públicas
                         .requestMatchers(
                                 "/inicio",
+                                "/api/usuarios/**",
                                 "/auth/**",
                                 "/api/usuarios/registrar",
                                 "/api/servicios/crear")
@@ -45,7 +46,6 @@ public class SecurityConfig {
 
                         // Esta sí la probamos protegida
                         .requestMatchers(
-                                "/api/usuarios/**",
                                 "/api/servicios/categorias")
                         .hasAuthority("ROLE_Admin")
 
